@@ -77,10 +77,13 @@
 			quizzes.push(score);
 			docG("clearbttn").className = "bg-light text-dark offset-10 rounded btn btn-outline-dark"
 			
+			let htm = "<div class='row'>";
 			docG("scoresdiv").innerHTML = "";
 			for (i = 0; i < quizzes.length; i++) {
-				docG("scoresdiv").innerHTML += "<h3 class='border text-center p-1'>" + quizzes[i] + "</h3>";
+				htm += "<h3 id='quiz_" + i + "' class='border text-center p-1 m-2 col-12 col-md-5'>" + quizzes[i] + "</h3>";
+				
 			}
+			docG("scoresdiv").innerHTML += htm;
 			
 			let dropLowest = false;
 			let ave = average(quizzes, dropLowest);
@@ -142,9 +145,15 @@
 			return mySum / vals.length;
 		}
 		
+		let qDivClicked = (e) => {
+			let clickedDiv = e.target.id
+			console.log(clickedDiv);
+		}
+		
 		go();
 		docG("addquizbttn").addEventListener("click", addQuizClicked);
 		docG("clearbttn").addEventListener("click", resetApp);
+		docG("scoresdiv").addEventListener("click", qDivClicked);
 		
 		docG("quizgrade").addEventListener("keydown", function(e) {
 			if (e.code === "Enter") {

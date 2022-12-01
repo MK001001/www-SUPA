@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  	<head>
+    	<!-- Required meta tags -->
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    	<!-- Bootstrap CSS -->
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    	<title>Quiz Averager</title>
+  	</head>
+  	<body>
+		<div id="inputs" class="row">
+			<div class="col-md-10 offset-md-1">
+				<h1 class="col-12 bg-primary text-light text-center pb-2 rounded">Quiz Averager</h1>
+				<form class="mt-4 mb-4">
+					<div class="input-group pt-2 pb-2">
+						<div class="input-group-prepend mt-2 mb-2">
+							<span class="input-group-text" id="basic-addon1">Add a Quiz</span>
+						</div>
+						<input id="quizgrade" type="text" class="col-8 col-md-10 mt-2 mb-2 rounded-right" placeholder="Enter your next quiz score">
+						<button id="addquizbttn" type="button" class="btn btn-primary text-light text-center ml-xl-4 mt-1">Add New Quiz</button>
+					</div>
+				</form>
+				<div class="row">
+					<div class="col-12 col-md-6 pl-3 pr-3 pb-3">
+						<h2 class="col-12 bg-success text-light text-center rounded pt-1 pb-1">Current Scores</h2>
+						<div id="scoresdiv" class="col-12">85,44,100,22,33</div>
+					</div>
+					<div class="col-12 col-md-6 pl-3 pr-3 pb-3">
+						<h2 class="col-12 bg-success text-light text-center rounded pt-1 pb-1">Average</h2>
+						<div id="avediv" class="col-12 text-center">56.80</div>
+					</div>
+				</div>
+				<button type="button" id="clearbttn" class="bg-light text-dark offset-10 rounded btn btn-outline-dark disabled">Clear</button>
+				<div id="errormsg" class="d-none">
+					<article class="row">
+						<div class="col-12 m-4 p-4 bg-danger text-light">You entered an invalid number. Please try again.</div>
+					</article>
+				</div>
+			</div>
+		</div>
+
+    	<!-- Optional JavaScript -->
+    	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+    	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</body>
+	<script>
+		let docG = (id) => {return document.getElementById(id);}
+		
+		let quizzes = [];
+		
+		let resetApp = () => {
+			docG("scoresdiv").innerHTML = "";
+			docG("avediv").innerHTML = "";
+			quizzes = [];
+			docG("clearbttn").className = "bg-light text-dark offset-10 rounded btn btn-outline-dark disabled"
+			let scoreElem = docG("quizgrade");
+			scoreElem.value = "";
+			scoreElem.focus();
+		}
+		
+		let addQuizClicked = (e) => {
+			docG("errormsg").className = "d-none";
+			
+			let scoreElem = docG("quizgrade");
+			let score = parseFloat(scoreElem.value);
+			
+			if (Number.isNaN(score)){
+				docG("errormsg").className = "d-block";
+				scoreElem.select();
+				return;
+			}
+			quizzes.push(score);
+			docG("clearbttn").className = "bg-light text-dark offset-10 rounded btn btn-outline-dark"
+			
+			let htm = "<div class='row'>";
+			docG("scoresdiv").innerHTML = "";
+			for (i = 0; i < quizzes.length; i++) {
+				htm += "<h3 id='quiz-" + i + "' class='border text-center p-1 m-2 col-12 col-md-5'>" + quizzes[i] + "</h3>";
+				
+			}
+			htm += "</div>"
+			docG("scoresdiv").innerHTML = htm;
+			
+			let dropLowest = false;
+			let ave = average(quizzes, dropLowest);
+			
+			docG("avediv").innerHTML = "<h3 class='border text-center p-1'>" + ave.toFixed(2) + "</h3>"
+			
+			scoreElem.value = "";
+			scoreElem.focus();
+		}
+		
+		let go = () => {
+			let scoreElem = docG("quizgrade");
+			scoreElem.value = 85;
+			addQuizClicked();
+			scoreElem.value = 44;
+			addQuizClicked();
+			scoreElem.value = 100;
+			addQuizClicked();
+			scoreElem.value = 22;
+			addQuizClicked();
+		}
+		
+		let sum = (nums) => {
+			let s = 0;
+			for (i = 0; i < nums.length; i++){
+				s += nums[i];
+			}
+			return s;
+		}
+		
+		let largest = (nums) => {
+			let large = nums[0];
+			for (i = 0; i < nums.length; i++){
+				if (nums[i] > large){
+					large = nums[i];
+				}
+			}
+			return large;
+		}
+		
+		let smallest = (nums) => {
+			let small = nums[0];
+			for (i = 0; i < nums.length; i++){
+				if (nums[i] < small){
+					small = nums[i]
+				}
+			}
+			return small;
+		}
+		
+		let average = (vals, dropLowest) => {
+			let mySum = sum(vals);
+			
+			if (dropLowest === true){
+				let lowest = smallest(vals)
+				mySum -= lowest;
+				return mySum / vals.length - 1;
+			}
+			return mySum / vals.length;
+		}
+		
+		let qDivClicked = (e) => {
+			let clickedDiv = e.target.id
+			console.log(clickedDiv);
+			let index = clickedDiv.substring(clickedDiv.indexOf("-")+1)
+			quizzes.splice(index,1);
+			
+			let htm = "<div class='row'>";
+			for (i = 0; i < quizzes.length; i++) {
+				htm += "<h3 id='quiz_" + i + "' class='border text-center p-1 m-2 col-12 col-md-5'>" + quizzes[i] + "</h3>";
+			}
+			htm += "</div>"
+			docG("scoresdiv").innerHTML = htm
+			
+			let dropLowest = false;
+			let ave = average(quizzes, dropLowest);
+			
+			docG("avediv").innerHTML = "<h3 class='border text-center p-1'>" + ave.toFixed(2) + "</h3>"
+		}
+		
+		go();
+		docG("addquizbttn").addEventListener("click", addQuizClicked);
+		docG("clearbttn").addEventListener("click", resetApp);
+		docG("scoresdiv").addEventListener("click", qDivClicked);
+		
+		docG("quizgrade").addEventListener("keydown", function(e) {
+			if (e.code === "Enter") {
+				e.preventDefault;
+				addQuizClicked();
+			}
+		})
+	</script>
+</html>

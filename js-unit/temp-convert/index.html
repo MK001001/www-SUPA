@@ -64,40 +64,40 @@
 			  let temp = docG("tempinput").value;
 			  let type = docG("temptype").value;
 			  console.log("Temp type changed to: " + type);
-			  console.log(temp)
-			  convert()
+			  console.log(temp);
+			  convert();
 		  }
 		  
 		  let convert = () => {
 			  let temp = docG("tempinput").value;
 			  let temptype = docG("temptype").value;
-			  let out = docG("out").value
-			  let resulttype = docG("resulttype").value
-			  let converted = temp
+			  let out = docG("out").value;
+			  let resulttype = docG("resulttype").value;
+			  let converted = temp;
 			  
 			  if (temptype == 0) {
-				  converted = parseFloat(((temp - 32) * 5) / 9)
-				  converted = converted.toFixed(2)
-				  console.log(temp)
-				  console.log(converted)
+				  converted = parseFloat(((temp - 32) * 5) / 9);
+				  converted = converted.toFixed(2);
+				  console.log(temp);
+				  console.log(converted);
 			  }
 			  
 			  else if (temptype == 1) {
-				  converted = parseFloat(((temp * 1.8) + 32))
-				  converted = converted.toFixed(2)
-				  console.log(temp)
-				  console.log(converted)
+				  converted = parseFloat(((temp * 1.8) + 32));
+				  converted = converted.toFixed(2);
+				  console.log(temp);
+				  console.log(converted);
 			  }
 			  
-			  conversions.push(converted)
-			  console.log(conversions)
+			  conversions.push(converted);
+			  console.log(conversions);
 			  
-			  let htm = ""
+			  let htm = "";
+			  docG("tempdivs").innerHTML = "";
 			  for (i = 0; i < conversions.length; i++){
-				  if (temptype === 0){
-					  htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp_" + i + ">" + temp + " ˚ Fahrenheit = " + converted + " ˚ Celsius"
-				  }
+				  htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp_" + i + ">" + temp + " ˚ Fahrenheit = " + converted + " ˚ Celsius</div>"
 			  }
+			  docG("tempdivs").innerHTML = htm;
 		  }
 		  
 		  

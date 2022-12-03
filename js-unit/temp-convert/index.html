@@ -45,9 +45,7 @@
 			</div>
           </div>
         </div>
-		<div class="col-12">
-			<div class="row" id="tempdivs"></div>
-		</div>
+		<div class="col-12" id="output"></div>
       </div>
     </div>
     <!-- Optional JavaScript -->
@@ -58,15 +56,16 @@
 	  <script>
 		  
 		  let docG = (id) => {return document.getElementById(id);}
+		  docG("resulttype").value = 1;
 
 		  let conversions = [];
 		  let tempvals = [];
+		  let inputtype = [];
+		  let calctype = [];
 		  
 		  let selectChanged = (e) => {
 			  let temp = docG("tempinput").value;
 			  let type = docG("temptype").value;
-			  console.log("Temp type changed to: " + type);
-			  console.log(temp);
 			  convert();
 		  }
 		  
@@ -89,43 +88,72 @@
 			  let resulttype = docG("resulttype").value;
 			  let converted = temp;
 			  
+			  if (temp == ""){
+				  return;
+			  }
+			  
+			  if (temptype == resulttype){
+				  docG("output").innerHTML = "<div class='bg-danger text-light p-4 m-4 col-12'><h3>Change a Degree Type</h3></div>"
+				  return;
+			  }
+			  
 			  if (temptype == 0) {
 				  converted = parseFloat(((temp - 32) * 5) / 9);
 				  converted = converted.toFixed(2);
-				  console.log(temp);
-				  console.log(converted);
 			  }
 			  
 			  else if (temptype == 1) {
 				  converted = parseFloat(((temp * 1.8) + 32));
 				  converted = converted.toFixed(2);
-				  console.log(temp);
-				  console.log(converted);
 			  }
 			  
+			  let inputOptnTxt = docG("temptype").options[docG("temptype").selectedIndex].text;
+			  let resultOptnTxt = docG("resulttype").options[docG("resulttype").selectedIndex].text;
+			  
+			  inputtype.push(inputOptnTxt);
+			  calctype.push(resultOptnTxt);
 			  tempvals.push(temp);
 			  conversions.push(converted);
-			  console.log(tempvals)
-			  console.log(conversions);
-			  
+			  			  
 			  let htm = "";
-			  docG("tempdivs").innerHTML = "";
+			  docG("output").innerHTML = "";
+			  htm += "<div class='row' id='tempdivs'>";
 			  for (i = 0; i < tempvals.length; i++){
-				  if (temptype == 0) {
-				  	htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp_" + i + ">" + tempvals[i] + " ˚ Fahrenheit = " + conversions[i] + " ˚ Celsius</div>"
-				  }
-				  else if (temptype == 1) {
-				  	htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp_" + i + ">" + tempvals[i] + " ˚ Celsius = " + conversions[i] + " ˚ Fahrenheit</div>"
-				  }
+				  htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp-" + i + ">" + tempvals[i] + " ˚ " + inputtype[i] + " = " + conversions[i] + " ˚ " + calctype[i] + "</div>";
 			  }
-			  docG("tempdivs").innerHTML = htm;
+			  htm += "</div>";
+			  docG("output").innerHTML = htm;
+		  }
+		  
+		  let outDivClicked = (e) => {
+			  let clickedDiv = e.target.id;
+			  console.log(clickedDiv);
+			  let index = clickedDiv.substring(clickedDiv.indexOf("-")+1);
+			  
+			  conversions.splice(index,1);
+			  tempvals.splice(index,1);
+		  	  inputtype.splice(index,1);
+		  	  calctype.splice(index,1);
+			 
+			  let htm = "";
+			  docG("output").innerHTML = "";
+			  htm += "<div class='row' id='tempdivs'>";
+			  for (i = 0; i < tempvals.length; i++){
+				  htm += "<div class='col-12 col-md-6 border ml-4 mt-2 text-center p-2' id=temp-" + i + ">" + tempvals[i] + " ˚ " + inputtype[i] + " = " + conversions[i] + " ˚ " + calctype[i] + "</div>";
+			  }
+			  htm += "</div>";
+			  docG("output").innerHTML = htm;
 		  }
 		  
 		  go();
 		  
-		  docG("temptype").addEventListener("change", selectChanged)
-		  docG("resulttype").addEventListener("change", selectChanged)
-		  docG("")
+		  docG("temptype").addEventListener("change", selectChanged);
+		  docG("resulttype").addEventListener("change", selectChanged);
+		  
+		  docG("tempinput").addEventListener("input", convert);
+		  
+		  docG("output").addEventListener("click", outDivClicked);
+		  
 		  docG("tempinput").addEventListener("keydown", function(e) {
 			if (e.code === "Enter") {
 				e.preventDefault;

@@ -84,7 +84,7 @@
 		  let convert = () => {
 			  let temp = docG("tempinput").value;
 			  let temptype = docG("temptype").value;
-			  let out = docG("out").value;
+			  let out = docG("out");
 			  let resulttype = docG("resulttype").value;
 			  let converted = temp;
 			  
@@ -106,6 +106,8 @@
 				  converted = parseFloat(((temp * 1.8) + 32));
 				  converted = converted.toFixed(2);
 			  }
+			  
+			  out.value = converted;
 			  
 			  let inputOptnTxt = docG("temptype").options[docG("temptype").selectedIndex].text;
 			  let resultOptnTxt = docG("resulttype").options[docG("resulttype").selectedIndex].text;

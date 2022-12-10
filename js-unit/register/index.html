@@ -71,7 +71,6 @@
 				<button type="button" class="offset-1 btn-primary text-light rounded p-1 mt-3 mb-3" id="registerbttn">Register</button>
 				
 				<div style="opacity: 0;" id="error" class="bg-danger text-white col-12 p-2">Please fix the following:</div>
-				<div style="opacity: 0;" id="noError" class="bg-info text-white col-12 p-2">Thanks for registering!</div>
 			</div>
 		</form>
 		<!-- Optional JavaScript -->
@@ -136,53 +135,54 @@
 			let loginValidation = () => {
 				let bHasError = false;
 				let htm = "<div>Please fix the following:</div>";
+				$("#error").fadeTo("slow", 0);
 				
 				if (userCheck() === false){
 					bHasError = true;
-					htm += "<ul><li>Username must have 5 characters</li></ul>"
+					htm += "<ul><li>Username must have 5 characters</li></ul>";
 				}
 				
 				if (passCheck() === false){
 					bHasError = true;
-					htm += "<ul><li>Password must:<ul><li>Have 5 characters</li><li>Not contain '$' or '*'</li></ul></li></ul>"
+					htm += "<ul><li>Password must:<ul><li>Have 5 characters</li><li>Not contain '$' or '*'</li></ul></li></ul>";
 				}
 				
 				if (emailCheck() === false){
 					bHasError = true;
-					htm += "<ul><li>Email must:<ul><li>Have 5 characters</li><li>Contain '@' and '.'</li><li>Have '@' come before '.'</li></ul></li></ul>"
+					htm += "<ul><li>Email must:<ul><li>Have 5 characters</li><li>Contain '@' and '.'</li><li>Have '@' come before '.'</li></ul></li></ul>";
 					
 				}
 				
 				if (emailConfirm() === false){
 					bHasError = true;
-					htm += "<ul><li>Emails must match</li></ul>"
+					htm += "<ul><li>Emails must match</li></ul>";
 				}
 				
 				if (ageCheck() === false){
 					bHasError = true;
-					htm += "<ul><li>You must be over 18</li></ul>"
+					htm += "<ul><li>You must be over 18</li></ul>";
 				}
 				
 				if (genderCheck() === false){
 					bHasError = true;
-					htm += "<ul><li>Please enter a gender</li></ul>"
+					htm += "<ul><li>Please enter a gender</li></ul>";
 				}
 				
-				if (bHasError === true){
-					$("#error").fadeTo("slow", 0)
-					docG("error").innerHTML = htm
-					$("#error").removeClass("bg-info")
-					$("#error").addClass("bg-danger")
-					$("#error").fadeTo("slow", 1)
-				}
-				
-				else {
-					$("#error").fadeTo("slow", 0)
-					docG("error").innerHTML = "Thank you for registering!"
-					$("#error").removeClass("bg-danger")
-					$("#error").addClass("bg-info")
-					$("#error").fadeTo("slow", 1)
-				}
+				setTimeout(function(){
+					if (bHasError === true){
+						docG("error").innerHTML = htm;
+						$("#error").removeClass("bg-info");
+						$("#error").addClass("bg-danger");
+						$("#error").fadeTo("slow", 1);
+					}
+
+					else {
+						docG("error").innerHTML = "Thank you for registering!";
+						$("#error").removeClass("bg-danger");
+						$("#error").addClass("bg-info");
+						$("#error").fadeTo("slow", 1);
+					}
+				},500);
 			}
 			
 			docG("registerbttn").addEventListener("click", function(e){

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> <!-- jQuery --> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+		<title>Credit Card Verification</title>
+	</head>
+	<body class="bg-dark">
+		<div class="row">
+			<div class="col-10 offset-1 mt-4 mb-4 text-light">
+				<div class="border text-light bg-secondary p-3 mb-3 rounded">Please enter credit card info below ;)</div>
+				
+				<label for="cardnum">Enter Credit Card Number</label>
+				<div class="input-group col-12 mb-3">
+					<input id="cardnum" type="number" class="form-control rounded-right bg-secondary text-light" placeholder="Enter your Credit Card Number">
+				</div>
+				<div class="row">
+					<div class="col-12 col-md-6 mb-3">
+						<label for="expirationdate">Enter Expiration Date</label>
+						<div id="expirationdate" class="input-group mr-3">
+							<select class="bg-secondary rounded mr-3 text-center" id="expirmonth">
+								<option value="0">Select Month</option>
+								<option value="1">January</option>
+								<option value="2">February</option>
+								<option value="3">March</option>
+								<option value="4">April</option>
+								<option value="5">May</option>
+								<option value="6">June</option>
+								<option value="7">July</option>
+								<option value="8">August</option>
+								<option value="9">September</option>
+								<option value="10">October</option>
+								<option value="11">November</option>
+								<option value="12">December</option>
+							</select>
+							
+							<input id="expiryear" type="num" class="bg-secondary text-light form-control rounded" placeholder="Enter Year">
+							<div class="input-group-append">
+								<span class="input-group-text">Enter Year</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-6">
+						<label for="cvvinput">Enter Security Code (3 Wacky Numbers on the Back :))</label>
+						<div class="input-group">
+							<input id="cvvinput" type="text" class="form-control rounded-right bg-secondary text-light" placeholder="CVV">
+							<div class="input-group-append">
+								<span class="input-group-text">CVV</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6 mt-2">
+						<label for="firstname">Enter First Name</label>
+						<div class="input-group">
+							<input id="firstname" type="text" class="form-control rounded-right bg-secondary text-light" placeholder="CVV">
+						</div>
+					</div>
+					<div class="col-6 mt-2">
+						<label for="lastname">Enter Last Name</label>
+						<div class="input-group">
+							<input id="lastname" type="text" class="form-control rounded-right bg-secondary text-light" placeholder="CVV">
+						</div>
+					</div>
+				</div>
+				<button id="verify" type="button" class="btn-info border-light text-light p-2 m-3 text-center rounded">Verify!</button>
+				<div id="errordiv" style="opacity:0;" class="bg-info text-light rounded p-2 border-light"></div>
+				<div id="carddiv" class="bg-dark text-light border-light"></div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
+            let docG = (id) => {return document.getElementById(id);}
+			
+			let go = () => {
+				docG("cardnum").value = 4929801278125068;
+			}
+			
+			go();
+			
+            let luhnAlgo = (num) => {
+				let sumOfDigs = 0;
+				let index = 0;
+                while (num > 0) {
+					let digit = parseInt(num % 10);
+					if (index % 2 == 1 ){
+						digit *= 2;
+						if (digit.toString().length > 1){
+							sumOfDigs -= digit;
+							let combinedDigits = parseInt(digit.toString()[0]) + parseInt(digit.toString()[1]);
+							sumOfDigs += combinedDigits;
+						}
+						sumOfDigs += digit;
+					}
+					else if (index % 2 == 0){
+						sumOfDigs += digit;
+					}
+					num = parseInt(num/10);
+					index += 1;
+				}
+
+				if (sumOfDigs % 10 == 0 && sumOfDigs != 0){
+					return true;
+				}
+				return false;
+			}
+			
+			let dateCheck = () => {
+				let date = new Date();
+				if (date.getFullYear() >= docG("expiryear").value){
+					if (date.getFullYear() == docG("expiryear").value){
+						console.log("good job")
+						if (date.getMonth() <= docG("expirmonth").value){
+							console.log("hi")
+							return true
+						}
+					}
+					if (date.getFullYear() > docG("expiryear").value){
+						console.log("hiya")
+						return true
+					}
+				}
+				return false
+			}
+			
+			let checkCard = () => {
+				$("#errordiv").fadeTo("slow", 0)
+				console.log(dateCheck())
+				let bHasError = false;
+				let htm = "<div>Please Fix the Following:</div>";
+				
+				
+				if (luhnAlgo(docG("cardnum").value) === false){
+					htm += "<ul><li>Please enter a valid credit card number</li></ul>"
+					bHasError = true;
+				}
+				setTimeout(function(){
+					if (bHasError === true){
+						docG("errordiv").innerHTML = htm
+						$("#errordiv").removeClass("bg-info")
+						$("#errordiv").addClass("bg-info")
+						$("#errordiv").fadeTo("slow", 1)
+					}
+
+					else if (bHasError === false){
+						docG("errordiv").innerHTML = "Thank you for registering!"
+						$("#errordiv").removeClass("bg-info")
+						$("#errordiv").addClass("bg-secondary")
+						$("#errordiv").fadeTo("slow", 1)
+					}
+				}, 550);
+			}
+			
+			docG("verify").addEventListener("click",function(e){
+				luhnAlgo(docG("cardnum").value);
+				checkCard();
+			});
+        </script>
+	</body>
+</html>

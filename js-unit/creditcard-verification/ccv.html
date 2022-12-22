@@ -71,6 +71,7 @@
 					</div>
 				</div>
 				<button id="verify" type="button" class="btn-info border-light text-light p-2 m-3 text-center rounded">Verify!</button>
+				<button id="clear" type="button" class="btn-light border-light text-dark p-2 mt-3 mb-3 text-center rounded col-1 offset-8">Clear</button> 
 				<div id="errordiv" style="opacity:0;" class="bg-info text-light rounded p-2 border mb-3"></div>
 				<div class="bg-secondary text-light border rounded text-center"><h3>Saved Cards:</h3><div id="carddiv" class="row"></div></div>
 			</div>
@@ -221,10 +222,21 @@
 				}, 550);
 			}
 			
+			let clear = () => {
+				docG("cardnum").value = "";
+				docG("expirmonth").value = 0;
+				docG("expiryear").value = "";
+				docG("cvvinput").value = "";
+				docG("firstname").value = "";
+				docG("lastname").value = "";
+			}
+			
 			docG("verify").addEventListener("click",function(e){
 				luhnAlgo(docG("cardnum").value);
 				checkCard();
 			});
+			
+			docG("clear").addEventListener("click", clear);
         </script>
 	</body>
 </html>

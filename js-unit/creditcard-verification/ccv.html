@@ -72,7 +72,7 @@
 				</div>
 				<button id="verify" type="button" class="btn-info border-light text-light p-2 m-3 text-center rounded">Verify!</button>
 				<div id="errordiv" style="opacity:0;" class="bg-info text-light rounded p-2 border mb-3"></div>
-				<div class="bg-secondary text-light border rounded text-center"><h3>Saved Cards:</h3><div id="carddiv"></div></div>
+				<div class="bg-secondary text-light border rounded text-center"><h3>Saved Cards:</h3><div id="carddiv" class="row"></div></div>
 			</div>
 		</div>
 
@@ -82,6 +82,7 @@
         <script>
             let docG = (id) => {return document.getElementById(id);}
 			let cardCount = 0;
+			let cardArr = [];
 			
 			let go = () => {
 				docG("cardnum").value = 4929801278125068;
@@ -154,22 +155,24 @@
 			
 			let cardSave = () => {
 				let index = 0;
-				let cardhtm = "<div class='row'>";
+				let cardhtm = "";
 				
-				for (i = 0; i < cardCount; i++){
-					cardhtm += "<div style='opacity:0;' id='card_" + i + "' class='border mt-2 mb-2 bg-info text-light text-center rounded col-6 offset-3'>";
-					cardhtm += "<ul><li>Credit Card Number: " + docG("cardnum").value + "</li></ul>";
-					cardhtm += "<ul><li>Expiration Date: " + docG("expirmonth").value + " / " + docG("expiryear").value + "</li></ul>";
-					cardhtm += "<ul><li>CVV: " + docG("cvvinput").value + "</li></ul>";
-					cardhtm += "<ul><li>Name: " + docG("firstname").value + " " + docG("lastname").value + "</li></ul>";
-					cardhtm += "</div>";
+				for (i = 0; i < cardArr.length; i++){
 					index += 1;
 				}
 				
+				cardhtm += "<div style='opacity:0;' id='card_" + index + "' class='border mt-2 mb-2 bg-info text-light text-center rounded col-10 offset-1'>";
+				cardhtm += "<ul><li>Credit Card Number: " + docG("cardnum").value + "</li></ul>";
+				cardhtm += "<ul><li>Expiration Date: " + docG("expirmonth").value + " / " + docG("expiryear").value + "</li></ul>";
+				cardhtm += "<ul><li>CVV: " + docG("cvvinput").value + "</li></ul>";
+				cardhtm += "<ul><li>Name: " + docG("firstname").value + " " + docG("lastname").value + "</li></ul>";
 				cardhtm += "</div>";
-				docG("carddiv").innerHTML = cardhtm;
 				
-				for (i = 0; i <= index; i++){
+				cardArr.push(cardhtm);
+				
+				docG("carddiv").innerHTML = cardArr;
+				
+				for (i = 0; i < cardArr.length; i++){
 					$("#card_" + i).fadeTo("slow", 1);
 				}
 			}

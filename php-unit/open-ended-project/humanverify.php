@@ -1,3 +1,128 @@
+<?php
+$feedback = '<div class="bg-danger text-white mt-4 p-3">pls fix this stuff:<br>';
+$header = 'verify that you are human >:(';
+
+function yearVerification(){
+	$yearBorn = $_POST["year"];
+	if ($yearBorn === ""){
+		return "0";
+	}
+	if ($yearBorn < 1900){
+		return "1";
+	}
+	else if ($yearBorn > date("Y")){
+		return "2";
+	}
+	else {
+		return "3";
+	}
+}
+
+function monthVerification(){
+	$monthBorn = $_POST["month"];
+	$yearBorn = $_POST["year"];
+	if ($monthBorn < 1){
+		return "0";
+	}
+	else if ($yearBorn === date("Y")){
+		if ($monthBorn > date("m")){
+			return "1";
+		}
+		else {
+			return "2";
+		}
+	}
+	else {
+		return "2";
+	}
+}
+
+function dayVerification(){
+	$dayBorn = $_POST["day"];
+	$monthBorn = $_POST["month"];
+	$yearBorn = $_POST["year"];
+	
+	
+	if ($dayBorn < 1){
+		return "0";
+	}
+	else {
+		if ($monthBorn === 1 || $monthBorn === 3 || $monthBorn === 5 || $monthBorn === 7 || $monthBorn === 8 || $monthBorn === 10 || $monthBorn === 12){
+			if ($dayBorn > 31){
+				return "1";
+			}
+		}
+		else if ($monthBorn === 4 || $monthBorn === 6 || $monthBorn === 9 || $monthBorn === 11){
+			if ($dayBorn > 30){
+				return "1";
+			}
+		}
+		else if ($monthBorn === 2 && $dayBorn > 29){
+			return "1";
+		}
+		
+		if ($yearBorn === date("Y") && $monthBorn === date("m")){
+			if ($dayBorn > date("d")){
+				return "2";
+			}
+			else {
+				return "3";
+			}
+		}
+	}
+}
+
+$bformsubmitted = isset($_POST["year"]);
+function submitForm(){
+	global $bformsubmitted;
+	global $feedback;
+	if ($bformsubmitted === true){
+		$bhaserror = false;
+		
+		if (yearVerification() === "0"){
+			$feedback .= '<ul><li>please enter a year >:(</li></ul>';
+			$bhaserror = true;
+		}
+		if (yearVerification() === "1"){
+			$feedback .= '<ul><li>no living human is that old >:(</li></ul>';
+			$bhaserror = true;
+		}
+		if (yearVerification() === "2"){
+			$feedback .= "<ul><li>no human was born on that year yet >:(</li></ul>";
+			$bhasserror = true;
+		}
+		
+		if (yearVerification() === "3"){
+			if (monthVerification() === "0"){
+				$feedback .= "<ul><li>please select a month >:(</li></ul>";
+				$bhaserror = true;
+			}
+			if (monthVerification() === "1"){
+				$feedback .= "<ul><li>we haven't even made it to that month yet this year >:(</li></ul>";
+				$bhaserror = true;
+			}
+			
+			if (monthVerification() === "2"){
+				if (dayVerification() === "0"){
+					$feedback .= "<ul><li>please enter a day >:(</li></ul>";
+					$bhaserror = true;
+				}
+				if (dayVerification() === "1"){
+					$feedback .= "<ul><li>that day isn't even possible in that month >:(</li></ul>";
+					$bhaserror = true;
+				}
+				if (dayVerification() === "2"){
+					$feedback .= "<ul><li>we haven't even made it to that specific day yet >:(</li></ul>";
+					$bhaserror = true;
+				}
+			}
+		}
+	}
+}
+
+submitForm();
+
+?>
 <!doctype html>
 <html lang="en">
  	<head>
@@ -14,7 +139,11 @@
   	</head>
   	<body>
 		<div class="col-10 offset-1">
-    		<h1 class="mt-4">verify that you are human >:(</h1>
+    		<h1 class="mt-4 mb-3">
+				<?php
+				echo $header;
+				?>
+			</h1>
 			
 			<form method="post" name="form">
 				<label for="birthdayitems">date of birth info:</label>
@@ -27,8 +156,8 @@
 						<div class="col-12 col-md-4 mt-4 mb-4">
 							<label for="bmonth">pls select birth month</label>
 							<div id="bmonth" class="input-group">
-								<select class="rounded text-center form-control mt-2" id="month">
-									<option value="0" disabled selected>Select Month</option>
+								<select class="rounded text-center form-control mt-2" id="month" name="month">
+									<option value="0" selected>Select Month</option>
 									<option value="1">January</option>
 									<option value="2">February</option>
 									<option value="3">March</option>

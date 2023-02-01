@@ -1,16 +1,17 @@
 <?php
 $feedback = '<div class="bg-danger text-white mt-4 p-3">pls fix this stuff:<br>';
 $header = 'verify that you are human >:(';
+$isHidden = true;
 
 function yearVerification(){
-	$yearBorn = $_POST["year"];
-	if ($yearBorn === ""){
+	$yearBorn = intval($_POST["year"]);
+	if ($yearBorn === 0){
 		return "0";
 	}
 	if ($yearBorn < 1900){
 		return "1";
 	}
-	else if ($yearBorn > date("Y")){
+	else if ($yearBorn > intval(date("Y"))){
 		return "2";
 	}
 	else {
@@ -19,13 +20,13 @@ function yearVerification(){
 }
 
 function monthVerification(){
-	$monthBorn = $_POST["month"];
-	$yearBorn = $_POST["year"];
+	$monthBorn = intval($_POST["month"]);
+	$yearBorn = intval($_POST["year"]);
 	if ($monthBorn < 1){
 		return "0";
 	}
-	else if ($yearBorn === date("Y")){
-		if ($monthBorn > date("m")){
+	else if ($yearBorn === intval(date("Y"))){
+		if ($monthBorn > intval(date("m"))){
 			return "1";
 		}
 		else {
@@ -38,10 +39,9 @@ function monthVerification(){
 }
 
 function dayVerification(){
-	$dayBorn = $_POST["day"];
-	$monthBorn = $_POST["month"];
-	$yearBorn = $_POST["year"];
-	
+	$dayBorn = intval($_POST["day"]);
+	$monthBorn = intval($_POST["month"]);
+	$yearBorn = intval($_POST["year"]);
 	
 	if ($dayBorn < 1){
 		return "0";
@@ -61,8 +61,8 @@ function dayVerification(){
 			return "1";
 		}
 		
-		if ($yearBorn === date("Y") && $monthBorn === date("m")){
-			if ($dayBorn > date("d")){
+		if ($yearBorn === intval(date("Y")) && $monthBorn === intval(date("m"))){
+			if ($dayBorn > intval(date("d"))){
 				return "2";
 			}
 			else {
@@ -76,7 +76,10 @@ $bformsubmitted = isset($_POST["year"]);
 function submitForm(){
 	global $bformsubmitted;
 	global $feedback;
+	global $isHidden;
+	
 	if ($bformsubmitted === true){
+		$isHidden = true;
 		$bhaserror = false;
 		
 		if (yearVerification() === "0"){
@@ -117,10 +120,49 @@ function submitForm(){
 				}
 			}
 		}
+		
+		if ($bhaserror === true){
+			return "0";
+		}
+		if ($bhaserror === false){
+			$feedback = '<div class="bg-info text-white mt-4 p-3">you really are human! you may now proceed :)';
+			$isHidden = false;
+			return "1";
+			
+		}
 	}
 }
 
-submitForm();
+if (submitForm() === "1"){
+	$dayBorn = intval($_POST["day"]);
+	$monthBorn = intval($_POST["month"]);
+	$yearBorn = intval($_POST["year"]);
+	$currentDay = intval(date("d"));
+	$currentMonth = intval(date("m"));
+	$currentYear = intval(date("Y"));
+	
+	$secondsAlive = 0;
+	$daysAlive = 0;
+	$daysSince = $currentDay - $dayBorn;
+	$monthsSince = $currentMonth - $monthBorn;
+	
+	$daysAlive += ($currentYear - $yearBorn)*365;
+	$daysAlive += $daysSince;
+	$daysAlive += $monthsSince * 30;
+	
+	$secondsAlive += $daysAlive * 86400;
+	
+	$secondsAliveDiv = "<div class='rounded mt-4 p-3 col-10 offset-1 border'><h5>by the way, you've been alive for about $secondsAlive seconds :)</h5></div>";
+	
+	echo $secondsAliveDiv;
+}
+
+$bcontinuesubmit = isset($_POST["continue"]);
+if ($bcontinuesubmit === true){
+	if ($_POST["continue"] === "0"){
+		header('location: ./moviesfreereal.php');
+	}
+}
 
 ?>
 <!doctype html>
@@ -179,9 +221,8 @@ submitForm();
 						</div>
 					</div>
 				</div>
-				
-				<input type="submit" name="submit" class="btn-primary text-light rounded p-1 mt-3 mb-3">
-				
+					<input type="submit" name="submit" class="btn-primary text-light rounded p-1 mt-3 mb-3">	
+										
 				<div class="col-12" name="errors">
 					<?php
 					if ($bformsubmitted && $feedback > 0){
@@ -190,6 +231,18 @@ submitForm();
 					}
 					?>
 				</div>
+			</form>
+			<form method="post">
+				<div class="col-1 offset-11 mt-4" id="continueDiv" <?php if ($isHidden === true){echo "hidden";}?>>
+					<label for="continueSelect">continue?</label>
+					<div id="continueSelect" class="input-group">
+						<select class="rounded text-center form-control" id="continue" name="continue">
+							<option value="0">Yes</option>
+						</select>
+					</div>
+					<input type="submit" name="submit" class="btn-primary text-light rounded p-1 mt-3">
+				</div>
+				
 			</form>
 		</div>
 
